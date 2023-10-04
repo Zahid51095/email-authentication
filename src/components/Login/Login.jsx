@@ -1,10 +1,13 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import auth from "../../Firebase/Firebase.config";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Login = () => {
+
     const [registerError, setRegisterError] = useState("");
     const [success, setSuccess] = useState("");
+    const emailRef = useRef(null);
 
 
 
@@ -20,20 +23,51 @@ const Login = () => {
         signInWithEmailAndPassword(auth, email, password)
         .then(result => {
             console.log(result.user);
-            setSuccess("Welcome Abroad");
+            if(result.user.emailVerified){
+                setSuccess("Welcome Abroad");
+            }
+            alert('Please verify your email address.')
         })
         .catch(error => {
             console.error(error);
             setRegisterError(error.message);
         })
+
+       
+    }
+
+
+
+    const handleForgetPassword = () => {
+        const email = emailRef.current.value;
+        if(!email){
+            console.log('please provide an email', emailRef.current.value);
+            return;
+        }
+        else if(!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email))
+        {
+            console.log('pls write a valid email');
+            return;
+        }
+        sendPasswordResetEmail(auth, email)
+        .then(() => {
+            alert('Please check your email');
+        })
+        .catch(error => {
+            console.log(error);
+        })
+       
     }
 
 
 
   return (
+
         
 
-    <div className="hero min-h-screen bg-base-200">
+  <div>
+    <p>New to this website? Please <Link to='/register'>Register</Link></p>
+      <div className="hero min-h-screen bg-base-200">
      
       <div className="hero-content flex-col lg:flex-row-reverse">
       <div>
@@ -53,6 +87,7 @@ const Login = () => {
               <input
                 type="email"
                 name="email"
+                ref={emailRef}
                 placeholder="email"
                 className="input input-bordered"
                 required
@@ -70,7 +105,7 @@ const Login = () => {
                 required
               />
               <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
+                <a onClick={handleForgetPassword } href="#" className="label-text-alt link link-hover">
                   Forgot password?
                 </a>
               </label>
@@ -83,6 +118,8 @@ const Login = () => {
         </div>
       </div>
     </div>
+
+  </div>
   );
 };
 

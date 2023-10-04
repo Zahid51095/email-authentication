@@ -1,7 +1,8 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import auth from "../../Firebase/Firebase.config";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [registerError, setRegisterError] = useState("");
@@ -35,8 +36,13 @@ const Register = () => {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((result) => {
-        console.log(result);
+        console.log(result.user);
         setSuccess("User created successfully");
+
+        sendEmailVerification(result.user)
+        .then(() =>{
+            alert('Please check your email and verify your account')
+        })
       })
       .catch((error) => {
         console.log(error);
@@ -45,6 +51,7 @@ const Register = () => {
   };
   return (
     <div>
+        <p>Already have an account? Please <Link to='/login'>Login</Link></p>
       {registerError && <p className="text-red-700">{registerError}</p>}
       {success && <p className="text-green-700">{success}</p>}
       <div className="mx-auto md:w-1/2">
