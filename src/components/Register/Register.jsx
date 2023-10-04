@@ -13,7 +13,8 @@ const Register = () => {
 
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(email, password);
+    const accepted = e.target.terms.checked;
+    console.log(email, password, accepted);
 
     setRegisterError("");
     setSuccess("");
@@ -26,6 +27,10 @@ const Register = () => {
         "Your password should have at least one upper case character."
       );
       return;
+    }
+    else if(!accepted) {
+        setRegisterError('Please accept our terms and conditions!')
+        return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
@@ -46,30 +51,39 @@ const Register = () => {
         <h2 className="text-3xl mb-4">Please Register</h2>
         <form onSubmit={handleRegister}>
           <input
-            className="mb-4 w-3/4 py-2 px-4 "
+            className="mb-4 w-full py-2 px-4 "
             type="email"
             name="email"
             placeholder="Email Address"
             id=""
             required
+            style={{ border: "1px solid #ccc", borderRadius: "4px" }}
           />
           <br />
-          <input
-            className="mb-4 w-3/4 py-2 px-4"
+         <div className="mb-4 relative">
+         <input
+            className=" w-full py-2 px-4"
             type={showPassword ? "text" : "password"}
             name="password"
             placeholder="Password"
             id=""
             required
+            style={{ border: "1px solid #ccc", borderRadius: "4px" }}
           />
-          <span onClick={ () => setShowPassword(!showPassword)}>
+          <span className="absolute top-3 right-2" onClick={ () => setShowPassword(!showPassword)}>
             {
                 showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>
             }
           </span>
+         </div>
+          <br />
+          <div className="mb-2">
+            <input type="checkbox" name="terms" id="terms" />
+            <label className="ml-2" htmlFor="terms">Accept our <a href="">Terms and Conditions</a></label>
+          </div>
           <br />
           <input
-            className="btn btn-secondary mb-4 w-3/4"
+            className="btn btn-secondary mb-4 w-full"
             type="submit"
             value="Register"
           />
